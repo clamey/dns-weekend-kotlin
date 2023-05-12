@@ -32,26 +32,31 @@ data class DNSHeader(
 }
 
 data class DNSQuestion(
-    val qName: String,
-    val qType: Int = 1,
-    val qClass: Int = 1) {
+    val name: String,
+    val type_: Int = 1,
+    val class_: Int = 1) {
 
     fun toByteArray(): ByteArray {
         val boas = ByteArrayOutputStream()
         DataOutputStream(boas).use { dos ->
-            qName.split('.').map {
+            name.split('.').map {
                 it.toByteArray()
             }.forEach {
                 dos.writeByte(it.size)
                 dos.write(it)
             }
             dos.writeByte(0);
-            dos.writeShort(qType)
-            dos.writeShort(qClass)
+            dos.writeShort(type_)
+            dos.writeShort(class_)
         }
         return boas.toByteArray()
     }
 }
 
-
 fun ByteArray.toHex(): String = joinToString(separator = "") { eachByte -> "%02x".format(eachByte) }
+
+fun bitset(init: BitSet.() -> Unit): BitSet {
+    val bitset = BitSet()
+    bitset.init()
+    return bitset
+}
